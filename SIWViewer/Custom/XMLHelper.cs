@@ -6,18 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Xml;
-/**
-         * Loading from the XML file ... which has the following structure
-         * <report [attrs]>
-         *    <xml_version>
-         *    <page>
-         *      <item [attrs] >
-         *          <details title="aaa">
-         *      ...or...
-         *      <details title="aaa">
-         *          <item [attrs]>
-         * 
-         */
+
 namespace SIWViewer.Custom
 {
     /// <summary>
@@ -68,7 +57,7 @@ namespace SIWViewer.Custom
         /// Get the XPath for the specified <see cref="XmlNode"/>.
         /// </summary>
         /// <param name="xNode">The <see cref="XmlNode"/> to get the XPath of.</param>
-        /// <returns></returns>
+        /// <returns>The xpath of the <see cref="XmlNode"/> or <c>null</c> if <paramref name="xNode"/> is null.</returns>
         public static string GetXPath(XmlNode xNode)
         {
             if (xNode == null)
@@ -140,19 +129,14 @@ namespace SIWViewer.Custom
                 {
                     string value = attribute.Value.Replace('\n', ' ');
                     if (value.Length > maxValue.Length)
-                    {
                         maxValue = value;
-                    }
                 }
 
-                foreach (XmlNode child in xNode.ChildNodes)
-                {
-                    string max = GetMaxValue(child, attributeName, maxValue);
+                xNode.ChildNodes.Cast<XmlNode>().ToList().ForEach(e => {
+                    string max = GetMaxValue(e, attributeName, maxValue);
                     if (max.Length > maxValue.Length)
-                    {
                         maxValue = max;
-                    }
-                }
+                });
             }
             return maxValue;
         }
@@ -165,28 +149,15 @@ namespace SIWViewer.Custom
         public static List<XmlNode> GetChildElements(XmlNode xParentNode)
         {
             List<XmlNode> children = new List<XmlNode>();
-            if (xParentNode != null && xParentNode.HasChildNodes)
+            if (xParentNode == null)
+                return children;
+
+            xParentNode.ChildNodes.Cast<XmlNode>().ToList().ForEach(e =>
             {
-                xParentNode.ChildNodes.Cast<XmlNode>().ToList().ForEach(e =>
-                {
-                    if (e.NodeType == XmlNodeType.Element)
-                        children.Insert(0, e);
-                });
-            }
-            else
-                Console.WriteLine("No child nodes present or parent node was null!");
-            //if (xParentNode != null && xParentNode.HasChildNodes)
-            //{
-            //    XmlNodeList nodeList = xParentNode.ChildNodes;
-            //    for (int i = nodeList.Count; i >= 0; i--)
-            //    {
-            //        XmlNode xNode = nodeList.Item(i);
-            //        if (xNode.NodeType == XmlNodeType.Element)
-            //        {
-            //            children.Insert(0, xNode);
-            //        }
-            //    }
-            //}
+                if (e.NodeType == XmlNodeType.Element)
+                    children.Insert(0, e);
+            });
+
             return children;
         }
 
