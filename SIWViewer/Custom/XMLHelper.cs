@@ -6,10 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Xml;
-
-namespace SIWViewer.Custom
-{
-    /**
+/**
          * Loading from the XML file ... which has the following structure
          * <report [attrs]>
          *    <xml_version>
@@ -21,6 +18,11 @@ namespace SIWViewer.Custom
          *          <item [attrs]>
          * 
          */
+namespace SIWViewer.Custom
+{
+    /// <summary>
+    /// This class provides helper methods for interactions with XML files. Using this class, it is possible to open and traverse one or multiple XML files.
+    /// </summary>
     public class XMLHelper
     {
         /// <summary>
@@ -41,7 +43,7 @@ namespace SIWViewer.Custom
                 return null;
             }
 
-            float ver = Convert.ToSingle(GetAttribute(dom.DocumentElement, "xml_version"), CultureInfo.CurrentCulture.NumberFormat);
+            float ver = Convert.ToSingle(GetAttributeValue(dom.DocumentElement, "xml_version"), CultureInfo.CurrentCulture.NumberFormat);
             if (ver < 1.2f)
             {
                 MessageBox.Show($"Only XML versions >= 1.2 are supported. The XML version you tried to open was: {ver}", "SIW Viewer Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
@@ -51,95 +53,115 @@ namespace SIWViewer.Custom
             return dom;
         }
 
+        /// <summary>
+        /// Evaluate an XPath and get the <see cref="XmlNode"/> represented by it.
+        /// </summary>
+        /// <param name="parent">The parent <see cref="XmlNode"/> of the path.</param>
+        /// <param name="xPath">The string representing the XPath.</param>
+        /// <returns>An <see cref="XmlNode"/>.</returns>
         public static XmlNode EvaluateXPath(XmlNode parent, string xPath)
         {
             return parent.SelectSingleNode(xPath);
         }
 
-        public string GetXPath(XmlNode xnode)
+        /// <summary>
+        /// Get the XPath for the specified <see cref="XmlNode"/>.
+        /// </summary>
+        /// <param name="xNode">The <see cref="XmlNode"/> to get the XPath of.</param>
+        /// <returns></returns>
+        public static string GetXPath(XmlNode xNode)
         {
-            if (xnode == null)
+            if (xNode == null)
             {
                 return null;
             }
-            if (xnode.NodeType == XmlNodeType.Document)
+
+            if (xNode.NodeType == XmlNodeType.Document)
             {
                 return "/";
             }
 
-            string xp = xnode.LocalName;
+            string xPath = xNode.LocalName;
             bool first = true;
-            foreach (XmlAttribute a in xnode.Attributes)
+
+            xNode.Attributes.Cast<XmlAttribute>().ToList().ForEach(attr =>
             {
                 if (first)
                 {
-                    xp += "[";
+                    xPath += "[";
                     first = false;
                 }
                 else
                 {
-                    xp += " and ";
+                    xPath += " and ";
                 }
-                xp += "@" + a.Name + "=\"" + EncodeXML(a.Value) + "\"";
-            }
+                xPath += $"@{attr.Name}=\"{EncodeXML(attr.Value)}\"";
+            });
+
             if (!first)
             {
-                xp += "]";
+                xPath += "]";
             }
-            string x = GetXPath(xnode.ParentNode);
+
+            string x = GetXPath(xNode.ParentNode);
+
             if (x != null)
             {
-                xp = x + "/" + xp;
+                xPath = $"{x}/{xPath}";
             }
-            return xp;
+
+            return xPath.ToString();
         }
 
+        /// <summary>
+        /// Encode the specified string into the correct XML representation. This encode is for the special characters: \, &lt;, &gt;, &amp;
+        /// <para>All other characters are simply appeneded to the new encoded string.</para>
+        /// </summary>
+        /// <param name="str">The string to encode to XML.</param>
+        /// <returns>The encoded XML string.</returns>
         public static string EncodeXML(string str)
         {
             StringBuilder encStr = new StringBuilder("");
-            char[] array = str.ToCharArray();
-            for (int i = 0; i < array.Length; i++)
+            str.ToList().ForEach(e =>
             {
-                switch (array[i])
-                {
-                    case '\"':
-                        encStr.Append("&quot;");
-                        break;
-                    case '<':
-                        encStr.Append("&lt;");
-                        break;
-                    case '>':
-                        encStr.Append("&gt;");
-                        break;
-                    case '&':
-                        encStr.Append("&amp;");
-                        break;
-                    default:
-                        encStr.Append(array[i]);
-                        break;
-                }
-            }
+                string append =
+                    e.Equals('\"') ? "&quot;" :
+                    e.Equals('<') ? "&lt;" :
+                    e.Equals('>') ? "&gt;" :
+                    e.Equals('&') ? "&amp;" :
+                    e.ToString();
+
+                encStr.Append(append);
+            });
             return encStr.ToString();
         }
 
-        public static string GetMaxValue(XmlNode xNode, string attrNm, string maxValue)
+        /// <summary>
+        /// Get the max value present in the specified <see cref="XmlNode"/>.
+        /// </summary>
+        /// <param name="xNode">The node to get the max value of.</param>
+        /// <param name="attributeName">The attribute name to search.</param>
+        /// <param name="maxValue">The current max value.</param>
+        /// <returns>The max value present in <paramref name="xNode"/>.</returns>
+        public static string GetMaxValue(XmlNode xNode, string attributeName, string maxValue)
         {
             if (xNode is XmlElement)
             {
-                attrNm = attrNm.Replace(' ', '_');
+                attributeName = attributeName.Replace(' ', '_');
 
-                XmlNode attr = xNode.Attributes.GetNamedItem(attrNm);
-                if (attr != null)
+                XmlNode attribute = xNode.Attributes.GetNamedItem(attributeName);
+                if (attribute != null)
                 {
-                    string value = attr.Value.Replace('\n', ' ');
+                    string value = attribute.Value.Replace('\n', ' ');
                     if (value.Length > maxValue.Length)
                     {
                         maxValue = value;
                     }
                 }
-                foreach (XmlNode kid in xNode.ChildNodes)
+
+                foreach (XmlNode child in xNode.ChildNodes)
                 {
-                    string max = GetMaxValue(kid, attrNm, maxValue);
+                    string max = GetMaxValue(child, attributeName, maxValue);
                     if (max.Length > maxValue.Length)
                     {
                         maxValue = max;
@@ -149,43 +171,63 @@ namespace SIWViewer.Custom
             return maxValue;
         }
 
+        /// <summary>
+        /// Get the child elements of the specified parent node.
+        /// </summary>
+        /// <param name="xParentNode">The <see cref="XmlNode"/> to get the children of.</param>
+        /// <returns>A list of type <see cref="XmlNode"/> containing the children nodes in the order of appearence.</returns>
         public static List<XmlNode> GetChildElements(XmlNode xParentNode)
         {
-            List<XmlNode> kids = new List<XmlNode>();
+            List<XmlNode> children = new List<XmlNode>();
             if (xParentNode != null && xParentNode.HasChildNodes)
             {
-                XmlNodeList nodeList = xParentNode.ChildNodes;
-                for (int i = nodeList.Count; --i >= 0;)
+                xParentNode.ChildNodes.Cast<XmlNode>().ToList().ForEach(e =>
                 {
-                    XmlNode xNode = nodeList.Item(i);
-                    if (xNode.NodeType == XmlNodeType.Element)
-                    {
-                        kids.Insert(0, xNode);
-                    }
-                }
+                    if (e.NodeType == XmlNodeType.Element)
+                        children.Insert(0, e);
+                });
             }
-            return kids;
+            else
+                Console.WriteLine("No child nodes present or parent node was null!");
+            //if (xParentNode != null && xParentNode.HasChildNodes)
+            //{
+            //    XmlNodeList nodeList = xParentNode.ChildNodes;
+            //    for (int i = nodeList.Count; i >= 0; i--)
+            //    {
+            //        XmlNode xNode = nodeList.Item(i);
+            //        if (xNode.NodeType == XmlNodeType.Element)
+            //        {
+            //            children.Insert(0, xNode);
+            //        }
+            //    }
+            //}
+            return children;
         }
 
-        public static string GetAttribute(XmlNode xmlNode, string attrName)
+        /// <summary>
+        /// Get the value of the <paramref name="xmlNode"/>'s attribute <paramref name="attributeName"/>.
+        /// </summary>
+        /// <param name="xmlNode">The <see cref="XmlNode"/> where the attribute is present.</param>
+        /// <param name="attributeName">The name of the attribute to get the value of.</param>
+        /// <returns>The attribute value or <c>null</c> if no attribute was found.</returns>
+        public static string GetAttributeValue(XmlNode xmlNode, string attributeName)
         {
-            for (int i = xmlNode.Attributes.Count; --i >= 0;)
-            {
-                if (xmlNode.Attributes.Item(i).Name.Equals(attrName))
-                {
-                    return xmlNode.Attributes.Item(i).Value;
-                }
-            }
-            return null;
+            string value = null;
+            xmlNode.Attributes.Cast<XmlAttribute>().ToList().ForEach(attr => {
+                if (attr.Name.Equals(attributeName))
+                    value = attr.Value;
+            });
+            return value;
         }
 
-        public static string GetFirstAttribute(XmlNode xmlNode)
+        /// <summary>
+        /// Get the first attribute present in the specified <paramref name="xmlNode"/>.
+        /// </summary>
+        /// <param name="xmlNode">The <see cref="XmlNode"/> to get the first attribute of.</param>
+        /// <returns>The first attribute value for the <paramref name="xmlNode"/> or <c>null</c> if the node as no attributes.</returns>
+        public static string GetFirstAttributeValue(XmlNode xmlNode)
         {
-            if (xmlNode.Attributes.Count > 0)
-            {
-                return xmlNode.Attributes.Item(0).Value;
-            }
-            return null;
+            return xmlNode.Attributes.Cast<XmlAttribute>().First().Value;
         }
     }
 }
