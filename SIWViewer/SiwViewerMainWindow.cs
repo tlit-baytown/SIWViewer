@@ -22,12 +22,12 @@ namespace SIWViewer
             treeView.BeforeExpand += new TreeViewCancelEventHandler(treeView1_BeforeExpand);
             treeView.AfterSelect += new TreeViewEventHandler(treeView1_AfterSelect);
             // some initializations...
-            initControls();
+            InitControls();
 //            System.Environment.GetCommandLineArgs();
-            String[] arguments = Environment.GetCommandLineArgs();
+            string[] arguments = Environment.GetCommandLineArgs();
             if (arguments.GetLength(0) == 2)
             {
-                processFile(arguments[1]);
+                ProcessFile(arguments[1]);
             }
         }
 
@@ -42,72 +42,37 @@ namespace SIWViewer
             Application.Exit();
         }
 
-        /**
-         * Loading from the XML file ... which has the following structure
-         * <report [attrs]>
-         *    <xml_version>
-         *    <page>
-         *      <item [attrs] >
-         *          <details title="aaa">
-         *      ...or...
-         *      <details title="aaa">
-         *          <item [attrs]>
-         * 
-         */
+        
         private void openToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            Console.WriteLine("OPEN what ...");
             OpenFileDialog dlg = new OpenFileDialog();
             dlg.FilterIndex = 1;
             // dlg.Filter = "SIW Files (*.xml) | *.xml|SIW Files (*.csv) | *.csv";
             dlg.Filter = "SIW Files (*.xml) | *.xml";
             if (DialogResult.OK == dlg.ShowDialog(this))
             {
-                String fileName = dlg.FileName;
-                processFile(fileName);
+                string fileName = dlg.FileName;
+                ProcessFile(fileName);
             }
         }
 
-        private void processFile(String fileName)
+        private void ProcessFile(string fileName)
         {
             // implement the open...
             try
             {
-                // SECTION 1. Create a DOM Document and load the XML data into it.
-                dom = new XmlDocument();
-                dom.Load(fileName);
-                Console.WriteLine("Loaded DOM from: " + fileName);
-
-                //SECTION 1.5. Verify the version and set the title
-                if (!"report".Equals(dom.DocumentElement.LocalName))
-                {
-                    MessageBox.Show(this, "The file '" + fileName + "' is not a SIW 'report' file !", "SIW Viewer Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                    return;
-                }
-                System.Globalization.NumberFormatInfo provider = new System.Globalization.NumberFormatInfo();
-
-                provider.NumberDecimalSeparator = ".";
-                provider.NumberGroupSeparator = ",";
-                provider.NumberGroupSizes = new int[] { 3 };
-
-                float ver = System.Convert.ToSingle(getAttribute(dom.DocumentElement, "xml_version"), provider);
-                if (ver < 1.2f)
-                {
-                    MessageBox.Show(this, "Only the versions >= 1.2 are supported, not this one: " + ver + " !", "SIW Viewer Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                    return;
-                }
-                this.Text = "SIW Viewer [ " + fileName + "] - \\\\" + getAttribute(dom.DocumentElement, "computer_name");
+                this.Text = "SIW Viewer [ " + fileName + "] - \\\\" + GetAttribute(dom.DocumentElement, "computer_name");
                 // SECTION 2. Initialize the TreeView control.
                 treeView.Nodes.Clear();
                 // add the root...
-                String name = getAttribute(dom.DocumentElement, "Title");
-                int type = getNodeType(dom.DocumentElement);
+                string name = GetAttribute(dom.DocumentElement, "Title");
+                int type = GetNodeType(dom.DocumentElement);
                 treeView.Nodes.Add(new MyTreeNode(name, type));
                 MyTreeNode tNode = (MyTreeNode)treeView.Nodes[0];
-                tNode.Tag = getXPath(dom.DocumentElement);
+                tNode.Tag = GetXPath(dom.DocumentElement);
 
                 // SECTION 3. Populate the TreeView with the DOM nodes.
-                addNextLevelNodes(tNode);
+                AddNextLevelNodes(tNode);
                 try
                 {
                     tNode.Nodes[2].ExpandAll();
@@ -135,7 +100,7 @@ namespace SIWViewer
                 tNode.Expand();
 
                 // SECTION 4: some initializations...
-                initControls();
+                InitControls();
             }
             catch (XmlException xmlEx)
             {
@@ -147,14 +112,14 @@ namespace SIWViewer
             }
         }
 
-        private int getNodeType(XmlNode node)
+        private int GetNodeType(XmlNode node)
         {
-            String sType = getAttribute(node, "__type__");
+            string sType = GetAttribute(node, "__type__");
             int type = sType == null ? 1 : System.Convert.ToInt32(sType);
             return type;
         }
 
-        private void initControls()
+        private void InitControls()
         {
             dataGridView1.Columns.Clear();
             dataGridView1.Rows.Clear();
@@ -167,77 +132,16 @@ namespace SIWViewer
             treeViewDetails.Hide();
         }
 
-        private XmlNode evalXPath(XmlNode parent, String xp)
-        {
-            XmlNode result = parent.SelectSingleNode(xp);
-            Console.Out.WriteLine("Found node: " + result + ", xp: " + xp);
-            return result;
-        }
+        
 
-        private String getXPath(XmlNode xnode)
+        private void AddNextLevelNodes(MyTreeNode tParentNode)
         {
-            if (xnode == null)
-            {
-                return null;
-            }
-            if (xnode.NodeType == XmlNodeType.Document)
-            {
-                return "/";
-            }
-            String xp = xnode.LocalName;
-            Boolean first = true;
-            foreach (XmlAttribute a in xnode.Attributes)
-            {
-                if (first)
-                {
-                    xp += "[";
-                    first = false;
-                }
-                else
-                {
-                    xp += " and ";
-                }
-                xp += "@" + a.Name + "=\"" + encodeXml(a.Value) + "\"";
-            }
-            if (!first)
-            {
-                xp += "]";
-            }
-            String x = getXPath(xnode.ParentNode);
-            if (x != null)
-            {
-                xp = x + "/" + xp;
-            }
-            return xp;
-        }
-
-        private static String encodeXml(String str)
-        {
-            String encStr = "";
-            char[] array = str.ToCharArray();
-            for (int i = 0; i < array.Length; i++)
-            {
-                switch (array[i])
-                {
-                    case '\"': encStr += "&quot;"; break;
-                    case '<': encStr += "&lt;"; break;
-                    case '>': encStr += "&gt;"; break;
-                    case '&': encStr += "&amp;"; break;
-                    //case '\'': encStr += "&apos;"; break;
-                    default: encStr += array[i]; break;
-                }
-            }
-            return encStr;
-        }
-
-        private void addNextLevelNodes(MyTreeNode tParentNode)
-        {
-            String xp = tParentNode.Tag.ToString();
+            string xp = tParentNode.Tag.ToString();
             if (xp == null)
             {
                 return;
             }
-            XmlNode xParentNode = evalXPath(dom, xp);
+            XmlNode xParentNode = EvaluateXPath(dom, xp);
             // Add the nodes to the TreeView during the looping process.
             if (xParentNode != null && xParentNode.HasChildNodes)
             {
@@ -252,8 +156,8 @@ namespace SIWViewer
                     XmlNode xNode = xParentNode.ChildNodes[i];
                     if (xNode.NodeType == XmlNodeType.Element)
                     {
-                        MyTreeNode tnode = new MyTreeNode(getAttribute(xNode, "Title"), getNodeType(xNode));
-                        tnode.Tag = getXPath(xNode);
+                        MyTreeNode tnode = new MyTreeNode(GetAttribute(xNode, "Title"), GetNodeType(xNode));
+                        tnode.Tag = GetXPath(xNode);
                         tParentNode.Nodes.Add(tnode);
 
                         MyTreeNode fakeNode = new MyTreeNode("loading...", 1);
@@ -269,15 +173,15 @@ namespace SIWViewer
             if (tNode.Nodes.Count == 1 && "loading...".Equals(tNode.Nodes[0].Text))
             {
                 tNode.Nodes.Clear();
-                addNextLevelNodes(tNode);
+                AddNextLevelNodes(tNode);
             }
         }
 
         private void treeView1_AfterSelect(object sender, TreeViewEventArgs e)
         {
             MyTreeNode tNode = (MyTreeNode)e.Node;
-            String xp = tNode.Tag.ToString();
-            XmlNode xmlNode = evalXPath(dom, xp);
+            string xp = tNode.Tag.ToString();
+            XmlNode xmlNode = EvaluateXPath(dom, xp);
 
             dataGridView1.Columns.Clear();
             dataGridView1.Rows.Clear();
@@ -298,34 +202,34 @@ namespace SIWViewer
                     dataGridView1.Hide();
                     treeViewDetails.Show();
 
-                    populateDetailTree(xmlNode);
+                    PopulateDetailTree(xmlNode);
                 }
                 else
                 {
                     treeViewDetails.Hide();
                     dataGridView1.Show();
 
-                    populateDetailTables(xmlNode);
+                    PopulateDetailTables(xmlNode);
                 }
             }
             else
             {
-                initControls();
+                InitControls();
             }
             label1.Text = tNode.Text; // +" (type:" + tNode.TypeNode + ")";
             //Console.Out.WriteLine("selected xmlNode = " + (xmlNode != null ? xmlNode.Name : "null") + ", xp = " + xp);
         }
 
-        private void populateDetailTree(XmlNode xmlNode)
+        private void PopulateDetailTree(XmlNode xmlNode)
         {
             treeViewDetails.Columns.Clear();
             treeViewDetails.NodeControls.Clear();
 
-            treeViewDetails.Model = createTreeModel(xmlNode);
+            treeViewDetails.Model = CreateTreeModel(xmlNode);
             treeViewDetails.ExpandAll();
         }
 
-        private DetailsTreeModel createTreeModel(XmlNode pageElem)
+        private DetailsTreeModel CreateTreeModel(XmlNode pageElem)
         {
             // create the columns first
             int cols = 0;
@@ -338,7 +242,7 @@ namespace SIWViewer
                     tc.Header = a.Value;
 
                     // compute the width of the max value.
-                    String maxValue = getMaxValue(pageElem, a.Value, "");
+                    string maxValue = GetMaxValue(pageElem, a.Value, "");
                     SizeF width = treeViewDetails.CreateGraphics().MeasureString(maxValue, treeViewDetails.Font);
                     tc.Width = 20 + width.ToSize().Width + (cols == 0 ? 50 : 0);
 
@@ -361,36 +265,11 @@ namespace SIWViewer
             return new DetailsTreeModel(new DetailTreeNode(pageElem));
         }
 
-        private String getMaxValue(XmlNode xNode, String attrNm, String maxValue)
-        {
-            if (xNode is XmlElement)
-            {
-                attrNm = attrNm.Replace(' ', '_');
+        
 
-                XmlNode attr = xNode.Attributes.GetNamedItem(attrNm);
-                if (attr != null)
-                {
-                    String value = attr.Value.Replace('\n', ' ');
-                    if (value.Length > maxValue.Length)
-                    {
-                        maxValue = value;
-                    }
-                }
-                foreach (XmlNode kid in xNode.ChildNodes)
-                {
-                    String max = getMaxValue(kid, attrNm, maxValue);
-                    if (max.Length > maxValue.Length)
-                    {
-                        maxValue = max;
-                    }
-                }
-            }
-            return maxValue;
-        }
-
-        private void populateDetailTables(XmlNode xmlNode)
+        private void PopulateDetailTables(XmlNode xmlNode)
         {
-            List<XmlNode> kids = getChildElements(xmlNode);
+            List<XmlNode> kids = GetChildElements(xmlNode);
             XmlNode itemEl = null;
             for (int i = kids.Count; --i >= 0; )
             {
@@ -409,15 +288,15 @@ namespace SIWViewer
             {
                 for (int i = 0; i < itemEl.Attributes.Count; i++)
                 {
-                    String attr_nm = itemEl.Attributes.Item(i).Name;
-                    dataGridView1.Columns.Add(attr_nm, getAttribute(xmlNode, "H" + (i + 1)));
+                    string attr_nm = itemEl.Attributes.Item(i).Name;
+                    dataGridView1.Columns.Add(attr_nm, GetAttribute(xmlNode, "H" + (i + 1)));
                 }
             }
             else
             {
                 for (int i = 1; i < 50; i++)
                 {
-                    String colNm = getAttribute(xmlNode, "H" + i);
+                    string colNm = GetAttribute(xmlNode, "H" + i);
                     if (colNm == null)
                     {
                         break;
@@ -449,44 +328,7 @@ namespace SIWViewer
             }
         }
 
-        private List<XmlNode> getChildElements(XmlNode xParentNode)
-        {
-            List<XmlNode> kids = new List<XmlNode>();
-            if (xParentNode != null && xParentNode.HasChildNodes)
-            {
-                XmlNodeList nodeList = xParentNode.ChildNodes;
-                for (int i = nodeList.Count; --i >= 0; )
-                {
-                    XmlNode xNode = nodeList.Item(i);
-                    if (xNode.NodeType == XmlNodeType.Element)
-                    {
-                        kids.Insert(0, xNode);
-                    }
-                }
-            }
-            return kids;
-        }
-
-        public static String getAttribute(XmlNode xmlNode, String attrName)
-        {
-            for (int i = xmlNode.Attributes.Count; --i >= 0; )
-            {
-                if (xmlNode.Attributes.Item(i).Name.Equals(attrName))
-                {
-                    return xmlNode.Attributes.Item(i).Value;
-                }
-            }
-            return null;
-        }
-
-        public static String getFirstAttribute(XmlNode xmlNode)
-        {
-            if (xmlNode.Attributes.Count > 0)
-            {
-                return xmlNode.Attributes.Item(0).Value;
-            }
-            return null;
-        }
+        
 
         private void AddNode(XmlNode inXmlNode, MyTreeNode inTreeNode)
         {
@@ -507,8 +349,8 @@ namespace SIWViewer
                     xNode = inXmlNode.ChildNodes[i];
                     if (xNode.NodeType == XmlNodeType.Element)
                     {
-                        String name = getAttribute(xNode, "Title");
-                        inTreeNode.Nodes.Add(new MyTreeNode(name, getNodeType(xNode)));
+                        string name = GetAttribute(xNode, "Title");
+                        inTreeNode.Nodes.Add(new MyTreeNode(name, GetNodeType(xNode)));
                         tNode = (MyTreeNode)inTreeNode.Nodes[i];
                         AddNode(xNode, tNode);
                     }
@@ -516,7 +358,7 @@ namespace SIWViewer
             }
             else
             {
-                inTreeNode.Text = getAttribute(inXmlNode, "Title");
+                inTreeNode.Text = GetAttribute(inXmlNode, "Title");
             }
         }
 
@@ -541,25 +383,25 @@ namespace SIWViewer
             {
                 return;
             }
-            String attrs = "";
+            string attrs = "";
             for (int i = 0; i < dataGridView1.Columns.Count; i++)
             {
                 if (dataGridView1.Rows[selRow].Cells[i].Value != null)
                 {
-                    String val = dataGridView1.Rows[selRow].Cells[i].Value.ToString();
+                    string val = dataGridView1.Rows[selRow].Cells[i].Value.ToString();
                     if (attrs.Length > 0)
                     {
                         attrs += " and ";
                     }
-                    attrs += "@" + dataGridView1.Columns[i].Name + "=\"" + encodeXml(val) + "\"";
+                    attrs += "@" + dataGridView1.Columns[i].Name + "=\"" + EncodeXML(val) + "\"";
                 }
             }
 
-            String xp = "//item[" + attrs + "]";
+            string xp = "//item[" + attrs + "]";
             Console.Out.WriteLine("table selection row = " + selRow + " xp = " + xp);
 
-            XmlNode itemXml = evalXPath(dom, xp);
-            List<XmlNode> kids = getChildElements(itemXml);
+            XmlNode itemXml = EvaluateXPath(dom, xp);
+            List<XmlNode> kids = GetChildElements(itemXml);
             dataGridView2.Columns.Clear();
             dataGridView2.Rows.Clear();
             if (kids != null && kids.Count == 1 && "detail".Equals(kids[0].LocalName))
@@ -573,7 +415,7 @@ namespace SIWViewer
                 }
                 // here we have to create the second table ...
                 XmlNode xmlNode = kids[0];
-                kids = getChildElements(xmlNode);
+                kids = GetChildElements(xmlNode);
                 XmlNode itemEl = null;
                 for (int i = kids.Count; --i >= 0; )
                 {
@@ -592,15 +434,15 @@ namespace SIWViewer
                 {
                     for (int i = 0; i < itemEl.Attributes.Count; i++)
                     {
-                        String attr_nm = itemEl.Attributes.Item(i).Name;
-                        dataGridView2.Columns.Add(attr_nm, getAttribute(xmlNode, "H" + (i + 1)));
+                        string attr_nm = itemEl.Attributes.Item(i).Name;
+                        dataGridView2.Columns.Add(attr_nm, GetAttribute(xmlNode, "H" + (i + 1)));
                     }
                 }
                 else
                 {
                     for (int i = 1; i < 50; i++)
                     {
-                        String colNm = getAttribute(xmlNode, "H" + i);
+                        string colNm = GetAttribute(xmlNode, "H" + i);
                         if (colNm == null)
                         {
                             break;
@@ -666,24 +508,4 @@ namespace SIWViewer
         }
 
     }
-
-    class MyTreeNode : TreeNode
-    {
-        //
-        // Summary:
-        //     Gets or sets the type of the tree node.
-        //
-        // Returns:
-        //     An integer that contains type of the tree node. The default is 1. 
-        //     Another known value is 2.
-        [DefaultValue(1)]
-        public int TypeNode { get; set; }
-
-        public MyTreeNode(String name, int type)
-            : base(name)
-        {
-            this.TypeNode = type;
-        }
-    }
-
 }

@@ -58,9 +58,11 @@ namespace SIWViewer
             this.panel1.SuspendLayout();
             this.panel2.SuspendLayout();
             this.panel3.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
             this.splitContainer1.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.splitContainer2)).BeginInit();
             this.splitContainer2.Panel1.SuspendLayout();
             this.splitContainer2.Panel2.SuspendLayout();
             this.splitContainer2.SuspendLayout();
@@ -163,10 +165,10 @@ namespace SIWViewer
             this.treeViewDetails.Cursor = System.Windows.Forms.Cursors.Default;
             this.treeViewDetails.Dock = System.Windows.Forms.DockStyle.Fill;
             this.treeViewDetails.DragDropMarkColor = System.Drawing.Color.Black;
+            this.treeViewDetails.FullRowSelect = true;
             this.treeViewDetails.LineColor = System.Drawing.SystemColors.ControlDark;
             this.treeViewDetails.LoadOnDemand = true;
             this.treeViewDetails.Location = new System.Drawing.Point(0, 15);
-            this.treeViewDetails.FullRowSelect = true;
             this.treeViewDetails.Model = null;
             this.treeViewDetails.Name = "treeViewDetails";
             this.treeViewDetails.SelectedNode = null;
@@ -255,9 +257,9 @@ namespace SIWViewer
             this.openButton.Name = "openButton";
             this.openButton.Size = new System.Drawing.Size(28, 28);
             this.openButton.Text = "Open";
-            this.openButton.MouseLeave += new System.EventHandler(this.SiwViewerMainWindow_MouseLeave);
-            this.openButton.MouseEnter += new System.EventHandler(this.SiwViewerMainWindow_MouseEnter);
             this.openButton.Click += new System.EventHandler(this.openToolStripMenuItem_Click);
+            this.openButton.MouseEnter += new System.EventHandler(this.SiwViewerMainWindow_MouseEnter);
+            this.openButton.MouseLeave += new System.EventHandler(this.SiwViewerMainWindow_MouseLeave);
             // 
             // onlineHelpButton
             // 
@@ -288,37 +290,37 @@ namespace SIWViewer
             this.toolStripMenuItem2,
             this.exitToolStripMenuItem});
             this.fileToolStripMenuItem.Name = "fileToolStripMenuItem";
-            this.fileToolStripMenuItem.Size = new System.Drawing.Size(35, 20);
+            this.fileToolStripMenuItem.Size = new System.Drawing.Size(37, 20);
             this.fileToolStripMenuItem.Text = "&File";
-            this.fileToolStripMenuItem.MouseLeave += new System.EventHandler(this.SiwViewerMainWindow_MouseLeave);
             this.fileToolStripMenuItem.MouseEnter += new System.EventHandler(this.SiwViewerMainWindow_MouseEnter);
+            this.fileToolStripMenuItem.MouseLeave += new System.EventHandler(this.SiwViewerMainWindow_MouseLeave);
             // 
             // openToolStripMenuItem
             // 
             this.openToolStripMenuItem.Image = ((System.Drawing.Image)(resources.GetObject("openToolStripMenuItem.Image")));
             this.openToolStripMenuItem.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
             this.openToolStripMenuItem.Name = "openToolStripMenuItem";
-            this.openToolStripMenuItem.Size = new System.Drawing.Size(119, 30);
+            this.openToolStripMenuItem.Size = new System.Drawing.Size(111, 30);
             this.openToolStripMenuItem.Text = "&Open";
-            this.openToolStripMenuItem.MouseLeave += new System.EventHandler(this.SiwViewerMainWindow_MouseLeave);
-            this.openToolStripMenuItem.MouseEnter += new System.EventHandler(this.SiwViewerMainWindow_MouseEnter);
             this.openToolStripMenuItem.Click += new System.EventHandler(this.openToolStripMenuItem_Click);
+            this.openToolStripMenuItem.MouseEnter += new System.EventHandler(this.SiwViewerMainWindow_MouseEnter);
+            this.openToolStripMenuItem.MouseLeave += new System.EventHandler(this.SiwViewerMainWindow_MouseLeave);
             // 
             // toolStripMenuItem2
             // 
             this.toolStripMenuItem2.Name = "toolStripMenuItem2";
-            this.toolStripMenuItem2.Size = new System.Drawing.Size(116, 6);
+            this.toolStripMenuItem2.Size = new System.Drawing.Size(108, 6);
             // 
             // exitToolStripMenuItem
             // 
             this.exitToolStripMenuItem.Image = ((System.Drawing.Image)(resources.GetObject("exitToolStripMenuItem.Image")));
             this.exitToolStripMenuItem.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
             this.exitToolStripMenuItem.Name = "exitToolStripMenuItem";
-            this.exitToolStripMenuItem.Size = new System.Drawing.Size(119, 30);
+            this.exitToolStripMenuItem.Size = new System.Drawing.Size(111, 30);
             this.exitToolStripMenuItem.Text = "E&xit";
-            this.exitToolStripMenuItem.MouseLeave += new System.EventHandler(this.SiwViewerMainWindow_MouseLeave);
-            this.exitToolStripMenuItem.MouseEnter += new System.EventHandler(this.SiwViewerMainWindow_MouseEnter);
             this.exitToolStripMenuItem.Click += new System.EventHandler(this.exitToolStripMenuItem_Click);
+            this.exitToolStripMenuItem.MouseEnter += new System.EventHandler(this.SiwViewerMainWindow_MouseEnter);
+            this.exitToolStripMenuItem.MouseLeave += new System.EventHandler(this.SiwViewerMainWindow_MouseLeave);
             // 
             // helpToolStripMenuItem
             // 
@@ -327,42 +329,42 @@ namespace SIWViewer
             this.toolStripMenuItem3,
             this.aboutToolStripMenuItem});
             this.helpToolStripMenuItem.Name = "helpToolStripMenuItem";
-            this.helpToolStripMenuItem.Size = new System.Drawing.Size(40, 20);
+            this.helpToolStripMenuItem.Size = new System.Drawing.Size(44, 20);
             this.helpToolStripMenuItem.Text = "&Help";
-            this.helpToolStripMenuItem.MouseLeave += new System.EventHandler(this.SiwViewerMainWindow_MouseLeave);
             this.helpToolStripMenuItem.MouseEnter += new System.EventHandler(this.SiwViewerMainWindow_MouseEnter);
+            this.helpToolStripMenuItem.MouseLeave += new System.EventHandler(this.SiwViewerMainWindow_MouseLeave);
             // 
             // visitMyHomepageToolStripMenuItem
             // 
             this.visitMyHomepageToolStripMenuItem.Image = ((System.Drawing.Image)(resources.GetObject("visitMyHomepageToolStripMenuItem.Image")));
             this.visitMyHomepageToolStripMenuItem.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
             this.visitMyHomepageToolStripMenuItem.Name = "visitMyHomepageToolStripMenuItem";
-            this.visitMyHomepageToolStripMenuItem.Size = new System.Drawing.Size(183, 30);
+            this.visitMyHomepageToolStripMenuItem.Size = new System.Drawing.Size(186, 30);
             this.visitMyHomepageToolStripMenuItem.Text = "&Visit my Homepage";
-            this.visitMyHomepageToolStripMenuItem.MouseLeave += new System.EventHandler(this.SiwViewerMainWindow_MouseLeave);
-            this.visitMyHomepageToolStripMenuItem.MouseEnter += new System.EventHandler(this.SiwViewerMainWindow_MouseEnter);
             this.visitMyHomepageToolStripMenuItem.Click += new System.EventHandler(this.visitMyHomepageToolStripMenuItem_Click);
+            this.visitMyHomepageToolStripMenuItem.MouseEnter += new System.EventHandler(this.SiwViewerMainWindow_MouseEnter);
+            this.visitMyHomepageToolStripMenuItem.MouseLeave += new System.EventHandler(this.SiwViewerMainWindow_MouseLeave);
             // 
             // toolStripMenuItem3
             // 
             this.toolStripMenuItem3.Name = "toolStripMenuItem3";
-            this.toolStripMenuItem3.Size = new System.Drawing.Size(180, 6);
+            this.toolStripMenuItem3.Size = new System.Drawing.Size(183, 6);
             // 
             // aboutToolStripMenuItem
             // 
             this.aboutToolStripMenuItem.Image = ((System.Drawing.Image)(resources.GetObject("aboutToolStripMenuItem.Image")));
             this.aboutToolStripMenuItem.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
             this.aboutToolStripMenuItem.Name = "aboutToolStripMenuItem";
-            this.aboutToolStripMenuItem.Size = new System.Drawing.Size(183, 30);
+            this.aboutToolStripMenuItem.Size = new System.Drawing.Size(186, 30);
             this.aboutToolStripMenuItem.Text = "&About";
-            this.aboutToolStripMenuItem.MouseLeave += new System.EventHandler(this.SiwViewerMainWindow_MouseLeave);
-            this.aboutToolStripMenuItem.MouseEnter += new System.EventHandler(this.SiwViewerMainWindow_MouseEnter);
             this.aboutToolStripMenuItem.Click += new System.EventHandler(this.aboutToolStripMenuItem_Click);
+            this.aboutToolStripMenuItem.MouseEnter += new System.EventHandler(this.SiwViewerMainWindow_MouseEnter);
+            this.aboutToolStripMenuItem.MouseLeave += new System.EventHandler(this.SiwViewerMainWindow_MouseLeave);
             // 
             // toolStripStatusLabel1
             // 
             this.toolStripStatusLabel1.Name = "toolStripStatusLabel1";
-            this.toolStripStatusLabel1.Size = new System.Drawing.Size(133, 17);
+            this.toolStripStatusLabel1.Size = new System.Drawing.Size(141, 17);
             this.toolStripStatusLabel1.Text = "Welcome to SIW Viewer...";
             // 
             // statusStrip1
@@ -395,9 +397,11 @@ namespace SIWViewer
             this.panel3.ResumeLayout(false);
             this.splitContainer1.Panel1.ResumeLayout(false);
             this.splitContainer1.Panel2.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).EndInit();
             this.splitContainer1.ResumeLayout(false);
             this.splitContainer2.Panel1.ResumeLayout(false);
             this.splitContainer2.Panel2.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.splitContainer2)).EndInit();
             this.splitContainer2.ResumeLayout(false);
             this.panel4.ResumeLayout(false);
             this.panel4.PerformLayout();

@@ -64,6 +64,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Custom\CTreeNode.cs" />
+    <Compile Include="Custom\XMLHelper.cs" />
     <Compile Include="DetailsTreeModel.cs" />
     <Compile Include="DetailTreeNode.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
