@@ -10,7 +10,7 @@ using System.Threading;
 using System.Collections;
 using System.Xml;
 
-namespace SIWViewer
+namespace SIWViewer.Custom
 {
     public class DetailsTreeModel : ITreeModel
     {
@@ -26,15 +26,15 @@ namespace SIWViewer
             DetailTreeNode parent = treePath.LastNode as DetailTreeNode;
             if (parent == null)
             {
-                return node_.ChildNodes();
+                return node_.ChildNodes;
             }
-            return parent.ChildNodes();
+            return parent.ChildNodes;
         }
 
         public bool IsLeaf(TreePath treePath)
         {
             DetailTreeNode node = treePath.LastNode as DetailTreeNode;
-            return node.isLeaf();
+            return node.IsLeaf;
         }
 
         public event EventHandler<TreeModelEventArgs> NodesChanged;

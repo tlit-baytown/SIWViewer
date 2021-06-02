@@ -118,7 +118,7 @@ namespace SIWViewer
         private int GetNodeType(XmlNode node)
         {
             string sType = XMLHelper.GetAttributeValue(node, "__type__");
-            int type = sType == null ? 1 : System.Convert.ToInt32(sType);
+            int type = sType == null ? 1 : Convert.ToInt32(sType);
             return type;
         }
 

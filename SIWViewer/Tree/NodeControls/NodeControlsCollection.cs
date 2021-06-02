@@ -78,14 +78,13 @@ namespace Aga.Controls.Tree.NodeControls
 	{
 		private Type[] _types;
 
-		public NodeControlCollectionEditor(Type type)
-			: base(type)
+		public NodeControlCollectionEditor(Type type) : base(type)
 		{
 			_types = new Type[] { typeof(NodeTextBox), typeof(NodeComboBox), typeof(NodeCheckBox),
 				typeof(NodeStateIcon), typeof(NodeIcon)  };
 		}
 
-		protected override System.Type[] CreateNewItemTypes()
+		protected override Type[] CreateNewItemTypes()
 		{
 			return _types;
 		}

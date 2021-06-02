@@ -15,8 +15,7 @@ namespace Aga.Controls.Tree
 		private TreeColumn _column;
 		private int _initWidth;
 
-		public ResizeColumnState(TreeViewAdv tree, TreeColumn column, Point p)
-			: base(tree)
+		public ResizeColumnState(TreeViewAdv tree, TreeColumn column, Point p) : base(tree)
 		{
 			_column = column;
 			_initLocation = p;
@@ -30,14 +29,9 @@ namespace Aga.Controls.Tree
 				FinishResize();
 		}
 
-		public override void MouseDown(TreeNodeAdvMouseEventArgs args)
-		{
-		}
+        public override void MouseDown(TreeNodeAdvMouseEventArgs args) { }
 
-		public override void MouseUp(TreeNodeAdvMouseEventArgs args)
-		{
-			FinishResize();
-		}
+		public override void MouseUp(TreeNodeAdvMouseEventArgs args) { FinishResize(); }
 
 		private void FinishResize()
 		{

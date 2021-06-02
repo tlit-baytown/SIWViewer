@@ -66,8 +66,8 @@
   <ItemGroup>
     <Compile Include="Custom\CTreeNode.cs" />
     <Compile Include="Custom\XMLHelper.cs" />
-    <Compile Include="DetailsTreeModel.cs" />
-    <Compile Include="DetailTreeNode.cs" />
+    <Compile Include="Custom\DetailsTreeModel.cs" />
+    <Compile Include="Custom\DetailTreeNode.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -115,13 +115,12 @@
     <Compile Include="Tree\DrawContext.cs" />
     <Compile Include="Tree\DropPosition.cs" />
     <Compile Include="Tree\EditorContext.cs" />
-    <Compile Include="Tree\enums.cs" />
+    <Compile Include="Tree\Enums.cs" />
     <Compile Include="Tree\InputState.cs" />
     <Compile Include="Tree\InputWithControl.cs" />
     <Compile Include="Tree\InputWithShift.cs" />
     <Compile Include="Tree\IToolTipProvider.cs" />
     <Compile Include="Tree\ITreeModel.cs" />
-    <Compile Include="Tree\MouseArgs.cs" />
     <Compile Include="Tree\Node.cs" />
     <Compile Include="Tree\NodeControls\BaseTextControl.cs">
       <SubType>Component</SubType>

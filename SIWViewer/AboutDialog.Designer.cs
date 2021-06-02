@@ -100,7 +100,7 @@ namespace SIWViewer
             this.linkLabel1.AutoSize = true;
             this.linkLabel1.Location = new System.Drawing.Point(6, 61);
             this.linkLabel1.Name = "linkLabel1";
-            this.linkLabel1.Size = new System.Drawing.Size(92, 13);
+            this.linkLabel1.Size = new System.Drawing.Size(128, 13);
             this.linkLabel1.TabIndex = 2;
             this.linkLabel1.TabStop = true;
             this.linkLabel1.Text = "https://www.gtopala.com";
@@ -111,9 +111,9 @@ namespace SIWViewer
             this.label2.AutoSize = true;
             this.label2.Location = new System.Drawing.Point(4, 40);
             this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(342, 13);
+            this.label2.Size = new System.Drawing.Size(274, 13);
             this.label2.TabIndex = 1;
-            this.label2.Text = "This is a free version for personal and comercial usage !";
+            this.label2.Text = "This is a free version for personal and commercial usage!";
             // 
             // label1
             // 
@@ -136,7 +136,7 @@ namespace SIWViewer
             this.MaximizeBox = false;
             this.MinimizeBox = false;
             this.Name = "AboutDialog";
-            this.Opacity = 0.98;
+            this.Opacity = 0.98D;
             this.ShowInTaskbar = false;
             this.SizeGripStyle = System.Windows.Forms.SizeGripStyle.Show;
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;

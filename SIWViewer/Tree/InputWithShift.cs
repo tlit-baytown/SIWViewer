@@ -1,14 +1,13 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Linq;
 
 namespace Aga.Controls.Tree
 {
 	internal class InputWithShift: NormalInputState
 	{
-		public InputWithShift(TreeViewAdv tree): base(tree)
-		{
-		}
+        public InputWithShift(TreeViewAdv tree) : base(tree) { }
 
 		protected override void FocusRow(TreeNodeAdv node)
 		{
@@ -50,20 +49,18 @@ namespace Aga.Controls.Tree
 			}
 		}
 
-		protected override void MouseDownAtEmptySpace(TreeNodeAdvMouseEventArgs args)
-		{
-		}
+        protected override void MouseDownAtEmptySpace(TreeNodeAdvMouseEventArgs args) { }
 
 		private void SelectAllFromStart(TreeNodeAdv node)
 		{
 			Tree.ClearSelection();
 			int a = node.Row;
 			int b = Tree.SelectionStart.Row;
-			for (int i = Math.Min(a, b); i <= Math.Max(a, b); i++)
-			{
-				if (Tree.SelectionMode == TreeSelectionMode.Multi || Tree.RowMap[i].Parent == node.Parent)
-					Tree.RowMap[i].IsSelected = true;
-			}
+
+            Enumerable.Range(Math.Min(a, b), Math.Max(a, b)).ToList().ForEach(e => {
+                if (Tree.SelectionMode == TreeSelectionMode.Multi || Tree.RowMap[e].Parent == node.Parent)
+                    Tree.RowMap[e].IsSelected = true;
+            });
 		}
 	}
 }

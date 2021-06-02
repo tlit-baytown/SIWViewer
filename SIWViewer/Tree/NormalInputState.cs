@@ -9,9 +9,7 @@ namespace Aga.Controls.Tree
 	{
 		private bool _mouseDownFlag = false;
 
-		public NormalInputState(TreeViewAdv tree) : base(tree)
-		{
-		}
+        public NormalInputState(TreeViewAdv tree) : base(tree) { }
 
 		public override void KeyDown(KeyEventArgs args)
 		{
@@ -156,10 +154,8 @@ namespace Aga.Controls.Tree
 		protected bool CanSelect(TreeNodeAdv node)
 		{
 			if (Tree.SelectionMode == TreeSelectionMode.MultiSameParent)
-			{
-				return (Tree.SelectionStart == null || node.Parent == Tree.SelectionStart.Parent);
-			}
-			else
+                return (Tree.SelectionStart == null || node.Parent == Tree.SelectionStart.Parent);
+            else
 				return true;
 		}
 
