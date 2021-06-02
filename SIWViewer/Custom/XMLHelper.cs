@@ -72,43 +72,29 @@ namespace SIWViewer.Custom
         public static string GetXPath(XmlNode xNode)
         {
             if (xNode == null)
-            {
                 return null;
-            }
 
             if (xNode.NodeType == XmlNodeType.Document)
-            {
                 return "/";
-            }
 
             string xPath = xNode.LocalName;
             bool first = true;
 
             xNode.Attributes.Cast<XmlAttribute>().ToList().ForEach(attr =>
             {
-                if (first)
-                {
-                    xPath += "[";
-                    first = false;
-                }
-                else
-                {
-                    xPath += " and ";
-                }
+                xPath += first ? "[" : " and ";
                 xPath += $"@{attr.Name}=\"{EncodeXML(attr.Value)}\"";
+                if (first)
+                    first = false;
             });
 
             if (!first)
-            {
                 xPath += "]";
-            }
 
             string x = GetXPath(xNode.ParentNode);
 
             if (x != null)
-            {
                 xPath = $"{x}/{xPath}";
-            }
 
             return xPath.ToString();
         }
